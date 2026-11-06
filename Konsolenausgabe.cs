@@ -51,11 +51,38 @@ public static class Konsolenausgabe {
         Console.WriteLine($"Gefunden: {buch.Titel} von {buch.Autor}");
         Console.WriteLine("1 Eingeben um Buch auszuleihen || 2 Eingeben oder Enter drücken um Vorgang abzubrechen");
         var userEingabe = Console.ReadLine();
-        if(userEingabe == "1"){
+        if(userEingabe == "1") {
             AusleihenUndMelden(buch);
         } else {
             Console.WriteLine("Vorgang abgebrochen");
         }
     }
+
+    public static void UserBuchZurueck(Bibliothek bibo) {
+        var ausgeliehen = bibo.SucheNachAusgeliehen();
+
+        if(ausgeliehen.Count == 0) {
+            Console.WriteLine("Keine Ausgeliehenden Bücher gefunden");
+        } else {
+            Console.WriteLine($"Folgende Titel wurden ausgeliehen");
+            foreach(var x in ausgeliehen) { 
+                Console.WriteLine($"{x.Titel} vom Autor {x.Autor}");
+            }
+            Console.WriteLine("Titel eingeben um Buch zurückzugeben || 2 Eingeben oder Enter drücken um Vorgang abzubrechen");
+            var eingabeTitel = Console.ReadLine();
+            if(eingabeTitel == "2" || string.IsNullOrWhiteSpace(eingabeTitel)) {
+                Console.WriteLine("Vorgang abgebrochen");
+            } else {
+                var buch = bibo.SucheNachTitel(eingabeTitel);
+                if(buch is null) {
+                    Console.WriteLine("Titel nicht gefunden");
+                } else { 
+                ZurueckGebenUndMelden(buch);
+                }
+            }
+            
+        }
+    }
+
 }
 
