@@ -1,7 +1,7 @@
 ﻿namespace BibliothekFromScratch;
 
 public static class Konsolenausgabe {
-    public static void AusleihenUndMelden(Buch buch) {
+    private static void AusleihenUndMelden(Buch buch) {
         var wurdeAusgeliehen = buch.Ausleihen();
         if(wurdeAusgeliehen is true) {
             Console.WriteLine($"Das Buch vom Autor: {buch.Autor} wurde ausgeliehen");
@@ -10,7 +10,7 @@ public static class Konsolenausgabe {
         }
     }
 
-    public static void ZurueckGebenUndMelden(Buch buch) {
+    private static void ZurueckGebenUndMelden(Buch buch) {
         var wurdeZurueckGegeben = buch.Zurueckgeben();
         if(wurdeZurueckGegeben is true) {
             Console.WriteLine($"Das Buch {buch.Titel} vom Autor: {buch.Autor} wurde zurückgegeben");
@@ -19,7 +19,7 @@ public static class Konsolenausgabe {
         }
     }
 
-    public static void AutorSuchenUndAnzeigen(Bibliothek bibo, string autor) {
+    private static void AutorSuchenUndAnzeigen(Bibliothek bibo, string autor) {
         var result = bibo.SucheNachAutor(autor);
         if(result.Count == 0) {
             Console.WriteLine("Keine Treffer gefunden");
@@ -31,7 +31,7 @@ public static class Konsolenausgabe {
         }
     }
 
-    public static Buch? UserBuchSuche(Bibliothek bibo) {
+    private static Buch? BuchSuche(Bibliothek bibo) {
         Console.WriteLine("Bitte Titel eingeben oder mit Enter suche abrechen");
         var titelEingabe = Console.ReadLine();
         if(string.IsNullOrWhiteSpace(titelEingabe)) {
@@ -42,8 +42,60 @@ public static class Konsolenausgabe {
         }
     }
 
-    public static void UserBuchLeihen(Bibliothek bibo) {
-        var buch = UserBuchSuche(bibo);
+    public static void StarteMenue(Bibliothek bibo) {
+        Console.WriteLine(" === Herzlich Willkommen ===");
+        string eingabe = "a";
+        while(eingabe != "q") {
+            Console.WriteLine("q eingeben um Programm zu beenden");
+            Console.WriteLine("1 eingeben um alle Bücher anzuzeigen ");
+            Console.WriteLine("2 eingeben um Anzahl der Verfügbaren Bücher anzuzeigen");
+            Console.WriteLine("3 eingeben um Nach Autor zu suchen");
+            Console.WriteLine("4 eingeben um nach Titel zu suchen und Auszuleihen");
+            Console.WriteLine("5 eingeben um Buch zurückzugeben");
+            eingabe = Console.ReadLine();
+
+            if(eingabe == "1") {
+                AlleBuecherAnzeigen(bibo);
+            } else if(eingabe == "2") {
+                VerfuegbareAnzahlAnzeigen(bibo);
+            } else if(eingabe == "3") {
+                NachAutorSuchen(bibo);
+            } else if(eingabe == "4") {
+                BuchAusleihen(bibo);
+            } else if(eingabe == "5") {
+                BuchZurueckgeben(bibo);
+            } else if(eingabe == "q") {
+                Console.WriteLine("Auf Wiedersehen!");
+                Console.ReadKey();
+            } else {
+                Console.WriteLine("Eingabe Ungültig");
+            }
+        }
+    }
+
+    // === User Menü Auswahl 1 ===
+    private static void AlleBuecherAnzeigen(Bibliothek bibo) {
+        foreach(var buch in bibo.Buecher) {
+            Console.WriteLine($"Titel: {buch.Titel} vom Autor : {buch.Autor}");
+        }
+    }
+    // === User Menü Auswahl 2 ===
+    private static void VerfuegbareAnzahlAnzeigen(Bibliothek bibo) {
+        Console.WriteLine($" Die Anzahl der verfügbaren bücher: {bibo.AnzahlVerfuegbar().ToString()}");
+    }
+    // === User Menü Auswahl 3 ===
+    private static void NachAutorSuchen(Bibliothek bibo) {
+        Console.WriteLine($"Bitte Name des Autors eingeben oder mit Enter suche abrechen");
+        var autorEingabe = Console.ReadLine();
+        if(string.IsNullOrWhiteSpace(autorEingabe)) {
+            Console.WriteLine("Suche abgebrochen");
+        } else {
+            AutorSuchenUndAnzeigen(bibo, autorEingabe);
+        }
+    }
+    // === User Menü Auswahl 4 ===
+    private static void BuchAusleihen(Bibliothek bibo) {
+        var buch = BuchSuche(bibo);
         if(buch is null) {
             Console.WriteLine("Kein Buch gefunden oder Suche abgebrochen");
             return;
@@ -57,15 +109,15 @@ public static class Konsolenausgabe {
             Console.WriteLine("Vorgang abgebrochen");
         }
     }
-
-    public static void UserBuchZurueck(Bibliothek bibo) {
+    // === User Menü Auswahl 5 ===
+    private static void BuchZurueckgeben(Bibliothek bibo) {
         var ausgeliehen = bibo.SucheNachAusgeliehen();
 
         if(ausgeliehen.Count == 0) {
             Console.WriteLine("Keine Ausgeliehenden Bücher gefunden");
         } else {
             Console.WriteLine($"Folgende Titel wurden ausgeliehen");
-            foreach(var x in ausgeliehen) { 
+            foreach(var x in ausgeliehen) {
                 Console.WriteLine($"{x.Titel} vom Autor {x.Autor}");
             }
             Console.WriteLine("Titel eingeben um Buch zurückzugeben || 2 Eingeben oder Enter drücken um Vorgang abzubrechen");
@@ -76,11 +128,11 @@ public static class Konsolenausgabe {
                 var buch = bibo.SucheNachTitel(eingabeTitel);
                 if(buch is null) {
                     Console.WriteLine("Titel nicht gefunden");
-                } else { 
-                ZurueckGebenUndMelden(buch);
+                } else {
+                    ZurueckGebenUndMelden(buch);
                 }
             }
-            
+
         }
     }
 
