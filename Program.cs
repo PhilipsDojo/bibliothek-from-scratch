@@ -29,6 +29,7 @@ internal class Program {
             Console.WriteLine("2 eingeben um Anzahl der Verfügbaren Bücher anzuzeigen");
             Console.WriteLine("3 eingeben um Nach Autor zu suchen");
             Console.WriteLine("4 eingeben um nach Titel zu suchen und Auszuleihen");
+            Console.WriteLine("5 eingeben um Buch zurückzugeben");
             eingabe = Console.ReadLine();
 
             if(eingabe == "1") {
@@ -47,6 +48,8 @@ internal class Program {
                 }
             } else if(eingabe == "4") {
                 Konsolenausgabe.UserBuchLeihen(bibo);
+            }else if(eingabe == "5") {
+                Konsolenausgabe.UserBuchZurueck(bibo);
             }
             else if(eingabe == "q") {
                 Console.WriteLine("Auf Wiedersehen!");

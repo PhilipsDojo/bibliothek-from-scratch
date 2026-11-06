@@ -16,6 +16,7 @@ Konsolen-App mit Menü:
 - Anzahl verfügbarer Bücher anzeigen
 - Bücher nach Autor suchen
 - Buch nach Titel suchen und ausleihen
+- Buch zurückgeben
 
 ## Architektur-Entscheidungen
 
@@ -36,7 +37,7 @@ Ein bereits ausgeliehenes Buch oder eine Suche ohne Treffer sind keine Fehler, s
 - [x] Klasse `Buch`, Liste und Schleifen
 - [x] Ausleihen mit Prüfung
 - [x] Suchen und Zählen
-- [ ] Menü (in Arbeit: Zurückgeben)
+- [x] Menü mit Ausleihen und Zurückgeben
 - [ ] Mitglieder und Ausleihlimits
 - [ ] Gebühren bei verspäteter Rückgabe
 - [ ] Vererbung und Interfaces (weitere Medienarten)
@@ -53,6 +54,7 @@ Voraussetzung: [.NET SDK](https://dotnet.microsoft.com/download)
 ```
 git clone https://github.com/PhilipsDojo/bibliothek-from-scratch.git
 cd bibliothek-from-scratch
+dotnet run
 ```
 
 ## Technik

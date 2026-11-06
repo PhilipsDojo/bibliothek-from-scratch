@@ -43,4 +43,14 @@ public class Bibliothek {
         }
         return null;
     }
+
+    public IReadOnlyList<Buch> SucheNachAusgeliehen() {
+        List<Buch> trefferList = new List<Buch>();
+        foreach(var buch in _buecherliste) {
+            if(buch.IstAusgeliehen == true) {
+                trefferList.Add(buch);
+            }
+        }
+        return trefferList;
+    }
 }
