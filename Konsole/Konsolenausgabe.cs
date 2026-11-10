@@ -1,4 +1,6 @@
-﻿namespace BibliothekFromScratch;
+﻿using BibliothekFromScratch.Domain;
+
+namespace BibliothekFromScratch.Konsole;
 
 public static class Konsolenausgabe {
     private static void AusleihenUndMelden(Bibliothek bibo, Buch buch, Mitglied mitglied) {
@@ -59,7 +61,7 @@ public static class Konsolenausgabe {
 
     public static void StarteMenue(Bibliothek bibo) {
         Console.WriteLine(" === Herzlich Willkommen ===");
-        string eingabe = "a";
+        string? eingabe = "a";
         while(eingabe != "q") {
             Console.WriteLine("q eingeben um Programm zu beenden");
             Console.WriteLine("1 eingeben um alle Bücher anzuzeigen ");
@@ -67,7 +69,7 @@ public static class Konsolenausgabe {
             Console.WriteLine("3 eingeben um Nach Autor zu suchen");
             Console.WriteLine("4 eingeben um nach Titel zu suchen und Auszuleihen");
             Console.WriteLine("5 eingeben um Buch zurückzugeben");
-            Console.WriteLine("6 eingeben um Ihre ausgeliehenden Bücher einzusehen");
+            Console.WriteLine("6 eingeben um Ihre ausgeliehenen Bücher einzusehen");
             eingabe = Console.ReadLine();
 
             if(eingabe == "1") {

@@ -1,4 +1,6 @@
-﻿
+﻿using BibliothekFromScratch.Konsole;
+using BibliothekFromScratch.Domain;
+
 namespace BibliothekFromScratch;
 
 internal class Program {
