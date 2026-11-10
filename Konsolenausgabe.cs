@@ -1,8 +1,8 @@
 ﻿namespace BibliothekFromScratch;
 
 public static class Konsolenausgabe {
-    private static void AusleihenUndMelden(Buch buch) {
-        var wurdeAusgeliehen = buch.Ausleihen();
+    private static void AusleihenUndMelden(Bibliothek bibo, Buch buch, Mitglied mitglied) {
+        var wurdeAusgeliehen = bibo.Ausleihen(mitglied, buch);
         if(wurdeAusgeliehen is true) {
             Console.WriteLine($"Das Buch vom Autor: {buch.Autor} wurde ausgeliehen");
         } else {
@@ -32,13 +32,28 @@ public static class Konsolenausgabe {
     }
 
     private static Buch? BuchSuche(Bibliothek bibo) {
-        Console.WriteLine("Bitte Titel eingeben oder mit Enter suche abrechen");
+        Console.WriteLine("Bitte Titel eingeben oder mit Enter suche abbrechen");
         var titelEingabe = Console.ReadLine();
         if(string.IsNullOrWhiteSpace(titelEingabe)) {
             return null;
         } else {
             var buch = bibo.SucheNachTitel(titelEingabe);
             return buch;
+        }
+    }
+
+    private static Mitglied? MitgliederSuche(Bibliothek bibo) {
+        Console.WriteLine("Bitte Mitgliedsnummer eingeben oder mit Enter suche abbrechen");
+        var nummerEingabe = Console.ReadLine();
+        if(string.IsNullOrWhiteSpace(nummerEingabe)) {
+            return null;
+        } else {
+            if(!int.TryParse(nummerEingabe, out int number)) {
+                return null;
+            } else {
+                var mitglied = bibo.SucheNachMitglied(number);
+                return mitglied;
+            }
         }
     }
 
@@ -52,6 +67,7 @@ public static class Konsolenausgabe {
             Console.WriteLine("3 eingeben um Nach Autor zu suchen");
             Console.WriteLine("4 eingeben um nach Titel zu suchen und Auszuleihen");
             Console.WriteLine("5 eingeben um Buch zurückzugeben");
+            Console.WriteLine("6 eingeben um Ihre ausgeliehenden Bücher einzusehen");
             eingabe = Console.ReadLine();
 
             if(eingabe == "1") {
@@ -64,6 +80,8 @@ public static class Konsolenausgabe {
                 BuchAusleihen(bibo);
             } else if(eingabe == "5") {
                 BuchZurueckgeben(bibo);
+            } else if(eingabe == "6") {
+                MitgliederAusgeliehenZeigen(bibo);
             } else if(eingabe == "q") {
                 Console.WriteLine("Auf Wiedersehen!");
                 Console.ReadKey();
@@ -101,10 +119,16 @@ public static class Konsolenausgabe {
             return;
         }
         Console.WriteLine($"Gefunden: {buch.Titel} von {buch.Autor}");
+        var mitglied = MitgliederSuche(bibo);
+        if(mitglied is null) {
+            Console.WriteLine("Kein Mitglied gefunden oder Suche abgebrochen");
+            return;
+        }
+        Console.WriteLine($"Herzlich willkommen {mitglied.Vorname} {mitglied.Nachname}");
         Console.WriteLine("1 Eingeben um Buch auszuleihen || 2 Eingeben oder Enter drücken um Vorgang abzubrechen");
         var userEingabe = Console.ReadLine();
         if(userEingabe == "1") {
-            AusleihenUndMelden(buch);
+            AusleihenUndMelden(bibo, buch, mitglied);
         } else {
             Console.WriteLine("Vorgang abgebrochen");
         }
@@ -114,7 +138,7 @@ public static class Konsolenausgabe {
         var ausgeliehen = bibo.SucheNachAusgeliehen();
 
         if(ausgeliehen.Count == 0) {
-            Console.WriteLine("Keine Ausgeliehenden Bücher gefunden");
+            Console.WriteLine("Keine ausgeliehenen Bücher gefunden");
         } else {
             Console.WriteLine($"Folgende Titel wurden ausgeliehen");
             foreach(var x in ausgeliehen) {
@@ -135,6 +159,22 @@ public static class Konsolenausgabe {
 
         }
     }
+    // === User Menü Auswahl 6 ===
 
+    private static void MitgliederAusgeliehenZeigen(Bibliothek bibo) {
+        var mitglied = MitgliederSuche(bibo);
+        if(mitglied is null) {
+            Console.WriteLine("Mitgliedsnummer nicht gefunden");
+        } else {
+            var buecherliste = bibo.BuecherVon(mitglied);
+            if(buecherliste.Count == 0) {
+                Console.WriteLine("keine ausgeliehenen Bücher gefunden");
+            } else {
+                foreach(var buch in buecherliste) {
+                    Console.WriteLine($"{buch.Titel} vom Autor {buch.Autor}");
+                }
+            }
+        }
+    }
 }
 

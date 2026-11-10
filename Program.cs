@@ -11,10 +11,14 @@ internal class Program {
         var buch3 = new Buch("TitelC", "AutorC");
         var buch4 = new Buch("NeuerTitel", "AutorA");
 
-        bibo.Buchhinzufuegen(buch1);
-        bibo.Buchhinzufuegen(buch2);
-        bibo.Buchhinzufuegen(buch3);
-        bibo.Buchhinzufuegen(buch4);
+        bibo.BuchHinzufuegen(buch1);
+        bibo.BuchHinzufuegen(buch2);
+        bibo.BuchHinzufuegen(buch3);
+        bibo.BuchHinzufuegen(buch4);
+
+        var mitglied1 = bibo.MitgliedHinzufuegen("philip", "schacht");
+        var mitglied2 = bibo.MitgliedHinzufuegen("Levi", "Finn");
+        var mitglied3 = bibo.MitgliedHinzufuegen("Jacky", "Zant");
 
         Konsolenausgabe.StarteMenue(bibo);
     }

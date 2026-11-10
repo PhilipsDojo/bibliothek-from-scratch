@@ -17,6 +17,9 @@ Konsolen-App mit Menü:
 - Bücher nach Autor suchen
 - Buch nach Titel suchen und ausleihen
 - Buch zurückgeben
+- Mitglieder mit automatischer Nummer
+- Maximales Ausleihlimit 3
+- Ausgeliehene Bücher eines Mitglieds anzeigen
 
 ## Architektur-Entscheidungen
 
@@ -27,10 +30,17 @@ Konsolen-App mit Menü:
 Die Bibliothek hält ihre Bücher in einem privaten Feld (`List<Buch>`) und gibt sie nach außen nur als `IReadOnlyList<Buch>` heraus. Bücher können so nur über die Methoden der Bibliothek hinzugefügt werden, nicht an ihr vorbei.
 
 **Unveränderliche Eigenschaften.**
-Titel und Autor sind get-only Properties und werden nur im Konstruktor gesetzt. Der Ausleih-Status hat ein `private set` und ändert sich nur über `Ausleihen()` und `Zurueckgeben()`.
+Titel und Autor sind get-only Properties und werden nur im Konstruktor gesetzt. Der Ausleiher hat ein private set und ändert sich nur über Ausleihen() und Zurueckgeben(). IstAusgeliehen speichert nichts selbst, sondern wird aus dem Ausleiher berechnet.
 
 **Rückgabewerte statt Exceptions für normale Fälle.**
 Ein bereits ausgeliehenes Buch oder eine Suche ohne Treffer sind keine Fehler, sondern normale Situationen. `Ausleihen()` gibt deshalb `true` oder `false` zurück, und Suchen liefern eine leere Liste oder `null`.
+
+**Mitglieder hinzufügen.** 
+Neue Mitglieder nur über die Klasse Bibliothek "MitgliedHinzufuegen" hinzufügen. So wird die Nummer automatisch vergeben.
+
+**Single Source of Truth.**
+Nur das Buch weiß, wer es ausgeliehen hat (Ausleiher). Mitglieder haben keine eigene Bücherliste. Welche Bücher ein Mitglied hat, ermittelt die Bibliothek mit BuecherVon(). So kann die Information nie an zwei Stellen auseinanderlaufen.
+
 
 ## Fahrplan
 
@@ -38,7 +48,7 @@ Ein bereits ausgeliehenes Buch oder eine Suche ohne Treffer sind keine Fehler, s
 - [x] Ausleihen mit Prüfung
 - [x] Suchen und Zählen
 - [x] Menü mit Ausleihen und Zurückgeben
-- [ ] Mitglieder und Ausleihlimits
+- [x] Mitglieder und Ausleihlimits
 - [ ] Gebühren bei verspäteter Rückgabe
 - [ ] Vererbung und Interfaces (weitere Medienarten)
 - [ ] Exceptions für echte Fehlerfälle
