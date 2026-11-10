@@ -2,9 +2,10 @@
 
 public class Buch {
 
-    public  string Titel { get; }
-    public  string Autor { get;  }
-    public bool IstAusgeliehen { get; private set; }
+    public string Titel { get; }
+    public string Autor { get; }
+    public Mitglied? Ausleiher { get; private set; }
+    public bool IstAusgeliehen { get { return Ausleiher != null; } } // Computed Property sobald Ausleiher nicht null ist, ergibt die Property true
 
     public Buch(string titel, string autor) {
         this.Titel = titel;
@@ -12,11 +13,11 @@ public class Buch {
 
     }
 
-    public bool Ausleihen() {
+    public bool Ausleihen(Mitglied mitglied) {
         if(IstAusgeliehen is true) {
             return false;
         } else {
-            this.IstAusgeliehen = true;
+            this.Ausleiher = mitglied;
             return IstAusgeliehen;
         }
     }
@@ -24,7 +25,7 @@ public class Buch {
         if(!IstAusgeliehen) {
             return false;
         } else {
-            this.IstAusgeliehen = false;
+            this.Ausleiher = null;
             return true;
         }
     }
