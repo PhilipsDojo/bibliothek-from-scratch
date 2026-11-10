@@ -24,7 +24,8 @@ Konsolen-App mit Menü:
 ## Architektur-Entscheidungen
 
 **Logik und Anzeige sind getrennt.**
-`Buch` und `Bibliothek` enthalten nur Logik und kein `Console`. Alle Ein- und Ausgaben liegen in `Konsolenausgabe` und `Program`. Dadurch kann die Logik später unverändert in ein Blazor-Frontend übernommen werden.
+Die Logik liegt im Namespace `Domain`. Alle Ein- und Ausgaben liegen im Namespace `Konsole`. Die Abhängigkeit zeigt nur in eine Richtung: Die `Konsole` benutzt `Domain`. Die `Domain` kennt die `konsole` nicht!
+Dadurch kann die Logik später unverändert in ein Blazor-Frontend übernommen werden.
 
 **Kapselung der Bücherliste.**
 Die Bibliothek hält ihre Bücher in einem privaten Feld (`List<Buch>`) und gibt sie nach außen nur als `IReadOnlyList<Buch>` heraus. Bücher können so nur über die Methoden der Bibliothek hinzugefügt werden, nicht an ihr vorbei.

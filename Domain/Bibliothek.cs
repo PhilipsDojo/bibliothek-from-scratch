@@ -1,4 +1,4 @@
-﻿namespace BibliothekFromScratch;
+﻿namespace BibliothekFromScratch.Domain;
 
 public class Bibliothek {
     private List<Buch> _buecherliste = new List<Buch>();
