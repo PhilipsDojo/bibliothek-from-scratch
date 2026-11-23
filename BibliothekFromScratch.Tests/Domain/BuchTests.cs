@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BibliothekFromScratch.Tests.Domain;
 
-public class BuchTest {
+public class BuchTests {
     private readonly Bibliothek _bibo;
     private readonly Buch _buch;
     private readonly Mitglied _mitglied;
-    public BuchTest(){
+    public BuchTests(){
         _bibo = new Bibliothek();
         _buch = new Buch("Titel", "Autor");
         _mitglied = _bibo.MitgliedHinzufuegen("Xunit", "TestUser");
