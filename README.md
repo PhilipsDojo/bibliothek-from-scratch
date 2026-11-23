@@ -57,7 +57,7 @@ Nur das Buch weiß, wer es ausgeliehen hat (`Ausleiher`). Mitglieder haben keine
 - [x] Menü mit Ausleihen und Zurückgeben
 - [x] Mitglieder und Ausleihlimits
 - [x] Gebühren bei verspäteter Rückgabe
-- [ ] Unit-Tests
+- [x] Unit-Tests
 - [ ] Vererbung und Interfaces (weitere Medienarten)
 - [ ] Exceptions für echte Fehlerfälle
 - [ ] CSV-Import mit Prüfung jeder Zeile
@@ -71,7 +71,7 @@ Voraussetzung: [.NET SDK](https://dotnet.microsoft.com/download)
 ```
 git clone https://github.com/PhilipsDojo/bibliothek-from-scratch.git
 cd bibliothek-from-scratch
-dotnet run
+dotnet rungit a
 ```
 
 ## Technik
