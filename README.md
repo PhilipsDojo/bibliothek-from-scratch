@@ -16,32 +16,38 @@ Konsolen-App mit Menü:
 - Anzahl verfügbarer Bücher anzeigen
 - Bücher nach Autor suchen
 - Buch nach Titel suchen und ausleihen
-- Buch zurückgeben
+- Buch zurückgeben, mit Anzeige fälliger Gebühren
 - Mitglieder mit automatischer Nummer
-- Maximales Ausleihlimit 3
+- Maximales Ausleihlimit von 3 Büchern pro Mitglied
 - Ausgeliehene Bücher eines Mitglieds anzeigen
+- Leihfrist von 14 Tagen, danach 0,50 € Gebühr pro Tag
+- Liste aller überfälligen Bücher mit Ausleiher, Tagen und Gebühr
 
 ## Architektur-Entscheidungen
 
 **Logik und Anzeige sind getrennt.**
-Die Logik liegt im Namespace `Domain`. Alle Ein- und Ausgaben liegen im Namespace `Konsole`. Die Abhängigkeit zeigt nur in eine Richtung: Die `Konsole` benutzt `Domain`. Die `Domain` kennt die `konsole` nicht!
-Dadurch kann die Logik später unverändert in ein Blazor-Frontend übernommen werden.
+Die Logik liegt im Namespace `Domain`. Alle Ein- und Ausgaben liegen im Namespace `Konsole`. Die Abhängigkeit zeigt nur in eine Richtung: Die `Konsole` benutzt die `Domain`, die `Domain` kennt die `Konsole` nicht. Dadurch kann die Logik später unverändert in ein Blazor-Frontend übernommen werden.
 
 **Kapselung der Bücherliste.**
 Die Bibliothek hält ihre Bücher in einem privaten Feld (`List<Buch>`) und gibt sie nach außen nur als `IReadOnlyList<Buch>` heraus. Bücher können so nur über die Methoden der Bibliothek hinzugefügt werden, nicht an ihr vorbei.
 
 **Unveränderliche Eigenschaften.**
-Titel und Autor sind get-only Properties und werden nur im Konstruktor gesetzt. Der Ausleiher hat ein private set und ändert sich nur über Ausleihen() und Zurueckgeben(). IstAusgeliehen speichert nichts selbst, sondern wird aus dem Ausleiher berechnet.
+Titel, Autor, Leihfrist und Gebühr pro Tag sind get-only Properties. Ausleiher und Ausleihdatum haben ein `private set` und ändern sich nur über `Ausleihen()` und `Zurueckgeben()`. `IstAusgeliehen` speichert nichts selbst, sondern wird aus dem Ausleiher berechnet.
+
+**Berechnen statt speichern.**
+Ob ein Buch überfällig ist und wie hoch die Gebühr ist, hängt vom Stichtag ab. Diese Werte werden deshalb bei jeder Abfrage neu berechnet und nie gespeichert, sonst würden sie veralten. Die gemeinsame Tagesrechnung steht in einer einzigen Hilfsmethode.
+
+**Das Datum kommt von außen.**
+`Buch` und `Bibliothek` rufen nie selbst `DateTime.Now` auf, sondern bekommen das Datum als Parameter. Nur das Menü in der `Konsole` bestimmt, was „heute“ ist. So lassen sich verspätete Rückgaben testen, ohne wirklich 14 Tage zu warten.
 
 **Rückgabewerte statt Exceptions für normale Fälle.**
-Ein bereits ausgeliehenes Buch oder eine Suche ohne Treffer sind keine Fehler, sondern normale Situationen. `Ausleihen()` gibt deshalb `true` oder `false` zurück, und Suchen liefern eine leere Liste oder `null`.
+Ein bereits ausgeliehenes Buch, ein erreichtes Ausleihlimit oder eine Suche ohne Treffer sind keine Fehler, sondern normale Situationen. `Ausleihen()` gibt deshalb `true` oder `false` zurück, und Suchen liefern eine leere Liste oder `null`.
 
-**Mitglieder hinzufügen.** 
-Neue Mitglieder nur über die Klasse Bibliothek "MitgliedHinzufuegen" hinzufügen. So wird die Nummer automatisch vergeben.
+**Mitglieder nur über die Bibliothek anlegen.**
+Neue Mitglieder werden nur über `Bibliothek.MitgliedHinzufuegen()` angelegt, nie direkt mit `new Mitglied(...)`. So vergibt die Bibliothek die Mitgliedsnummer automatisch und eindeutig.
 
 **Single Source of Truth.**
-Nur das Buch weiß, wer es ausgeliehen hat (Ausleiher). Mitglieder haben keine eigene Bücherliste. Welche Bücher ein Mitglied hat, ermittelt die Bibliothek mit BuecherVon(). So kann die Information nie an zwei Stellen auseinanderlaufen.
-
+Nur das Buch weiß, wer es ausgeliehen hat (`Ausleiher`). Mitglieder haben keine eigene Bücherliste. Welche Bücher ein Mitglied hat, ermittelt die Bibliothek mit `BuecherVon()`. So kann die Information nie an zwei Stellen auseinanderlaufen.
 
 ## Fahrplan
 
@@ -50,11 +56,11 @@ Nur das Buch weiß, wer es ausgeliehen hat (Ausleiher). Mitglieder haben keine e
 - [x] Suchen und Zählen
 - [x] Menü mit Ausleihen und Zurückgeben
 - [x] Mitglieder und Ausleihlimits
-- [ ] Gebühren bei verspäteter Rückgabe
+- [x] Gebühren bei verspäteter Rückgabe
+- [ ] Unit-Tests
 - [ ] Vererbung und Interfaces (weitere Medienarten)
 - [ ] Exceptions für echte Fehlerfälle
 - [ ] CSV-Import mit Prüfung jeder Zeile
-- [ ] Unit-Tests
 - [ ] Blazor-Frontend
 - [ ] Datenbank mit EF Core
 

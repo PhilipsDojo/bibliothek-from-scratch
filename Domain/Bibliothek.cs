@@ -1,4 +1,6 @@
-﻿namespace BibliothekFromScratch.Domain;
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace BibliothekFromScratch.Domain;
 
 public class Bibliothek {
     private List<Buch> _buecherliste = new List<Buch>();
@@ -7,6 +9,7 @@ public class Bibliothek {
     public int MaxBuecherProMitglied { get; } = 3;
     public IReadOnlyList<Mitglied> Mitglieder { get { return _mitgliederliste; } }
     public IReadOnlyList<Buch> Buecher { get { return _buecherliste; } }
+
 
 
     public void BuchHinzufuegen(Buch buch) {
@@ -81,12 +84,22 @@ public class Bibliothek {
         return hatAusgeliehen;
     }
 
-    public bool Ausleihen(Mitglied mitglied, Buch buch) {
+    public bool Ausleihen(Mitglied mitglied, Buch buch, DateTime ausleihDatum) {
         if(BuecherVon(mitglied).Count < MaxBuecherProMitglied) {
-            var result = buch.Ausleihen(mitglied);
+            var result = buch.Ausleihen(mitglied, ausleihDatum);
             return result;
         } else {
             return false;
         }
+    }
+
+    public IReadOnlyList<Buch> AlleUeberfaelligen(DateTime dateToCheck) {
+        var alleUeberfaelligen = new List<Buch>();
+       foreach(var buch in _buecherliste) {
+           if(buch.IstUeberfaellig(dateToCheck)) {
+                alleUeberfaelligen.Add(buch);
+            }
+        }
+       return alleUeberfaelligen;
     }
 }
