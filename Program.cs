@@ -22,6 +22,9 @@ internal class Program {
         var mitglied2 = bibo.MitgliedHinzufuegen("Levi", "Finn");
         var mitglied3 = bibo.MitgliedHinzufuegen("Jacky", "Zant");
 
+        bibo.Ausleihen(mitglied1,buch1, DateTime.Now.AddDays(-20));
+        bibo.Ausleihen(mitglied1,buch2, DateTime.Now.AddDays(-3));
+
         Konsolenausgabe.StarteMenue(bibo);
     }
 

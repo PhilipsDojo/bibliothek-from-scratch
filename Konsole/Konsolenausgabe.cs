@@ -3,8 +3,8 @@
 namespace BibliothekFromScratch.Konsole;
 
 public static class Konsolenausgabe {
-    private static void AusleihenUndMelden(Bibliothek bibo, Buch buch, Mitglied mitglied) {
-        var wurdeAusgeliehen = bibo.Ausleihen(mitglied, buch);
+    private static void AusleihenUndMelden(Bibliothek bibo, Buch buch, Mitglied mitglied, DateTime datum) {
+        var wurdeAusgeliehen = bibo.Ausleihen(mitglied, buch, datum);
         if(wurdeAusgeliehen is true) {
             Console.WriteLine($"Das Buch vom Autor: {buch.Autor} wurde ausgeliehen");
         } else {
@@ -70,6 +70,7 @@ public static class Konsolenausgabe {
             Console.WriteLine("4 eingeben um nach Titel zu suchen und Auszuleihen");
             Console.WriteLine("5 eingeben um Buch zurückzugeben");
             Console.WriteLine("6 eingeben um Ihre ausgeliehenen Bücher einzusehen");
+            Console.WriteLine("7 eingeben um Liste aller Überfälligen Bücher anzuzeigen");
             eingabe = Console.ReadLine();
 
             if(eingabe == "1") {
@@ -79,11 +80,13 @@ public static class Konsolenausgabe {
             } else if(eingabe == "3") {
                 NachAutorSuchen(bibo);
             } else if(eingabe == "4") {
-                BuchAusleihen(bibo);
+                BuchAusleihen(bibo, DateTime.Now);
             } else if(eingabe == "5") {
-                BuchZurueckgeben(bibo);
+                BuchZurueckgeben(bibo, DateTime.Now);
             } else if(eingabe == "6") {
                 MitgliederAusgeliehenZeigen(bibo);
+            } else if(eingabe == "7") {
+                ZeigeAlleUeberfaelligen(bibo,DateTime.Now);
             } else if(eingabe == "q") {
                 Console.WriteLine("Auf Wiedersehen!");
                 Console.ReadKey();
@@ -114,7 +117,7 @@ public static class Konsolenausgabe {
         }
     }
     // === User Menü Auswahl 4 ===
-    private static void BuchAusleihen(Bibliothek bibo) {
+    private static void BuchAusleihen(Bibliothek bibo, DateTime datum) {
         var buch = BuchSuche(bibo);
         if(buch is null) {
             Console.WriteLine("Kein Buch gefunden oder Suche abgebrochen");
@@ -130,13 +133,13 @@ public static class Konsolenausgabe {
         Console.WriteLine("1 Eingeben um Buch auszuleihen || 2 Eingeben oder Enter drücken um Vorgang abzubrechen");
         var userEingabe = Console.ReadLine();
         if(userEingabe == "1") {
-            AusleihenUndMelden(bibo, buch, mitglied);
+            AusleihenUndMelden(bibo, buch, mitglied, datum);
         } else {
             Console.WriteLine("Vorgang abgebrochen");
         }
     }
     // === User Menü Auswahl 5 ===
-    private static void BuchZurueckgeben(Bibliothek bibo) {
+    private static void BuchZurueckgeben(Bibliothek bibo, DateTime datum) {
         var ausgeliehen = bibo.SucheNachAusgeliehen();
 
         if(ausgeliehen.Count == 0) {
@@ -144,7 +147,14 @@ public static class Konsolenausgabe {
         } else {
             Console.WriteLine($"Folgende Titel wurden ausgeliehen");
             foreach(var x in ausgeliehen) {
-                Console.WriteLine($"{x.Titel} vom Autor {x.Autor}");
+                if(x.IstUeberfaellig(datum)) {
+                    Console.WriteLine($"{x.Titel} vom Autor {x.Autor} --- Buch ist Überfällig");
+                    Console.WriteLine($"Gebühren für verspätete Rückgabe: {x.CalcGesamtGebuehr(datum):C}");
+                } else {
+                    Console.WriteLine($"{x.Titel} vom Autor {x.Autor} --- Buch ist nicht Überfällig");
+
+                }
+
             }
             Console.WriteLine("Titel eingeben um Buch zurückzugeben || 2 Eingeben oder Enter drücken um Vorgang abzubrechen");
             var eingabeTitel = Console.ReadLine();
@@ -176,6 +186,23 @@ public static class Konsolenausgabe {
                     Console.WriteLine($"{buch.Titel} vom Autor {buch.Autor}");
                 }
             }
+        }
+    }
+
+    // === User Menü Auswahl 7 ===
+    private static void ZeigeAlleUeberfaelligen(Bibliothek bibo, DateTime datum) {
+        var liste = bibo.AlleUeberfaelligen(datum);
+        if(liste.Count <= 0) {
+            Console.WriteLine("Keine Überfälligen Bücher gefunden");
+        } else { 
+        foreach(var buch in liste) {
+            var dueDays = buch.CalcOverDueDays(datum);
+                var user = buch.Ausleiher;
+                if(user is null) {
+                    continue;
+                } 
+            Console.WriteLine($"{buch.Titel} ist {dueDays} Tage Überfällig. Ausgliehen von {user.Vorname} {user.Nachname} aufgelaufene Gebühren: {buch.CalcGesamtGebuehr(datum):C}.");
+        }
         }
     }
 }
